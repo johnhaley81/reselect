@@ -28,12 +28,19 @@ export function defaultMemoize(func, equalityCheck = defaultEqualityCheck) {
 
   // we reference arguments instead of spreading them for performance reasons
   return function () {
-    if (!areArgumentsShallowlyEqual(equalityCheck, lastArgs, arguments)) {
+    const argsLength = arguments.length
+    const argsCopy = new Array(argsLength)
+    
+    for (let i = 0; i < argsLength; ++i) {
+      argsCopy[i] = arguments[i]
+    }
+    
+    if (!areArgumentsShallowlyEqual(equalityCheck, lastArgs, argsCopy)) {
       // apply arguments instead of spreading for performance.
-      lastResult = func.apply(null, arguments)
+      lastResult = func.apply(null, argsCopy)
     }
 
-    lastArgs = arguments
+    lastArgs = argsCopy
     return lastResult
   }
 }
